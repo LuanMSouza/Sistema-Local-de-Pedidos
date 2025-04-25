@@ -164,12 +164,16 @@
         display: flex;
         gap: 1rem;
         width: 80%;
+        flex-wrap: wrap;
+        justify-content: center;
         margin: 2rem auto;">
 
         </div>
 
         <div id="concluidas" style="
         display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
         gap: 1rem;
         width: 80%;
         margin: 2rem auto;">
@@ -270,12 +274,13 @@
                 div.innerHTML = `
                     <p>${nomeFormatado}</p>
                     <ul>
-                        ${pedidoArray.map(item => `<li>${item}</li>`).join('')}    
+                        ${pedidoArray.map(item => `<li>${item}</li>`).join('')}
                     </ul>
-                    <button ${nomeFormatado.trim().startsWith('CONCLUIDO') ? `onclick="chegou('${pedido.nome}')"` : ""}>
+                    <button ${nomeFormatado.trim().startsWith('CONCLUIDO') ? `` : `onclick="chegou('${pedido.nome}')"`}>
                         ${nomeFormatado.trim().startsWith('CONCLUIDO') ? 'Concluido' : 'Chegou!'}
                     </button>
                 `
+                console.log(nomeFormatado);
 
 
                 if (nomeFormatado.trim().startsWith('CONCLUIDO')) {
@@ -294,7 +299,7 @@
         // lançar como concluido
         async function chegou(id) {
 
-            if(id.trim().startsWith('CONCLUIDO')) return
+            if (id.trim().startsWith('CONCLUIDO')) return
 
             try {
 
