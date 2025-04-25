@@ -33,7 +33,7 @@ Depois:
 ## 🧱 Estrutura de pastas
 
 📦 sistema-pedidos  
-├── 📁 testes  
+├── 📁 Notas  
 │   └── Arquivos `.txt` gerados com os pedidos  
 ├── 📁 public  
 │   ├── index.html (interface do sistema)  
@@ -47,7 +47,7 @@ Depois:
 ## 📌 Observações
 
 - O CSS foi escrito inline de forma proposital, para facilitar o transporte e edição rápida do sistema.
-- Todos os pedidos ficam salvos localmente na pasta `testes`.
+- Todos os pedidos ficam salvos localmente na pasta `Notas`.
 
 ---
 
@@ -99,7 +99,7 @@ After:
 ## 🧱 Folder structure
 
 📦 order-system  
-├── 📁 testes  
+├── 📁 Notas  
 │   └── `.txt` files with order details  
 ├── 📁 public  
 │   ├── index.html (system UI)  
@@ -113,7 +113,7 @@ After:
 ## 📌 Notes
 
 - CSS was written inline **intentionally**, for easier editing and portability.
-- All orders are saved locally in the `testes` folder.
+- All orders are saved locally in the `Notas` folder.
 
 ---
 
