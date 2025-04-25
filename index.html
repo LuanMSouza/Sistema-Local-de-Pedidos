@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        * {
+            z-index: 1;
+
+        }
+
+        .card {
+            border: 1px solid gray;
+            padding: 1rem;
+            border-radius: 1rem;
+            display: grid;
+            grid-template-rows: 1fr 4fr 1fr;
+            width: 10rem;
+            height: 20rem;
+            z-index: 1;
+
+            p {
+                opacity: .7;
+                font-weight: bold;
+                font-size: 1.3rem;
+                margin: 0;
+                z-index: 1;
+
+            }
+
+            ul {
+                width: 100%;
+                list-style: none;
+                margin: 15px;
+                padding: 0;
+                z-index: 1;
+
+
+                li {
+                    line-height: 1.4;
+                    margin: 0;
+                    padding: 0;
+                    z-index: 1;
+
+                }
+            }
+
+            button {
+                margin: .5rem;
+                font-size: 1.5rem;
+                padding: .5rem 1rem;
+                border: 1px solid black;
+                border-radius: .5rem;
+                cursor: pointer;
+                box-shadow: 5px 5px 10px black;
+                z-index: 1;
+
+            }
+        }
+    </style>
+</head>
+
+<body style="font-family: Arial, Helvetica, sans-serif; background-color: #aaeeff;">
+
+    <div id="novaNota" style="
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 30%;
+    margin: 0 auto;
+    gap: 1rem;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background-color: #67e1ff;
+    padding: 1rem;
+    box-sizing: border-box;
+    border-radius: 1rem;
+    box-shadow: 5px 5px 10px black;
+    z-index: 100;
+
+    ">
+
+        <div id="sair" style="
+        position: absolute;
+        top: -1rem;
+        right: -1rem; 
+        background-color: #67e1ff;
+        border-radius: 5px;
+        font-size: 1.5rem;   
+        box-shadow: 5px 5px 10px black;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        color: red;
+        font-weight: bold;
+        ">X</div>
+
+        <textarea id="pedido" placeholder="O que chegou?..." style="
+        height: 15rem;
+        width: 90%;
+        font-size: 1.2rem;
+        padding: 1rem;
+        border-radius: 1rem;
+        z-index: 100;
+        ;
+        "></textarea>
+
+        <input id="dataPedido" type="date" style="
+        width: fit-content;
+        font-size: 1.2rem;
+        border: 1px solid black;
+        padding: 5px;
+        border-radius: 5px;
+        ">
+
+        <button id="lancarPedido" style="
+        padding: .5rem 3rem;
+        font-size: 1.2rem;
+        background-color: white;
+        border: 1px solid black;
+        border-radius: 5px;
+        cursor: pointer;
+        ">Lançar</button>
+    </div>
+
+    <div class="container" style="
+        background-color: white;
+        padding: 1rem;
+        border-radius: 1rem;
+        width: 70%;
+        margin: 3rem auto;
+        display: flex;
+        flex-direction: column;
+        ">
+
+        <h1 style="font-size: '5rem';
+        text-align: center;">
+            Notas que faltam</h1>
+
+
+        <button id="abrirNotaNova" style="
+        background-color: #aaeeff;
+        margin: 0 auto;
+        padding: 1rem 2rem ;
+        border-radius: 1rem;
+        font-size: 1.5rem;
+        margin: 0 auto;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 0 10px black;">
+            Chegou algo</button>
+
+
+        <div id="notasAbertas" style="
+        display: flex;
+        gap: 1rem;
+        width: 80%;
+        margin: 2rem auto;">
+
+        </div>
+
+        <div id="concluidas" style="
+        display: flex;
+        gap: 1rem;
+        width: 80%;
+        margin: 2rem auto;">
+
+        </div>
+
+    </div>
+
+
+
+
+    <script>
+
+        const URLSERVER = 'http://localhost:1234'
+
+
+        // abrir / fechar abas
+
+        document.body.addEventListener('click', (e) => {
+            if (e.target.id === 'abrirNotaNova') {
+                document.getElementById('novaNota').style.display = 'flex'
+
+                const hoje = new Date();
+                const yyyy = hoje.getFullYear();
+                const mm = String(hoje.getMonth() + 1).padStart(2, '0');
+                const dd = String(hoje.getDate()).padStart(2, '0');
+
+                const dataFormatada = `${yyyy}-${mm}-${dd}`;
+
+                document.getElementById('dataPedido').value = dataFormatada
+            } else if (e.target.id === 'sair') {
+                document.getElementById('novaNota').style.display = 'none'
+            }
+        })
+
+
+        // criar objeto
+        document.getElementById('lancarPedido').addEventListener('click', async () => {
+            const pedido = document.getElementById('pedido').value
+            const data = document.getElementById('dataPedido').value
+
+            const pedidoArray = pedido.split('\n')
+
+            const pedidoformatado = []
+
+            pedidoArray.forEach(linha => {
+
+                pedidoformatado.push(linha)
+            });
+
+            const pedidoFechado = {
+                data: data,
+                pedido: pedidoformatado
+            }
+
+            try {
+
+                const data = await fetch(`${URLSERVER}/pedidos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(pedidoFechado)
+                })
+
+                const resposta = await data.json()
+
+                alert(resposta)
+
+                window.location.reload()
+
+
+            } catch (error) {
+                alert(error)
+            }
+
+        })
+
+        // inicial
+        async function carregarPedidosNaTela() {
+
+            const pedidos = await fetch(`${URLSERVER}/pedidos`, {
+                method: 'GET'
+            })
+            const pedidosFormatados = await pedidos.json()
+
+            pedidosFormatados.forEach(pedido => {
+
+                const nomeFormatado = pedido.nome
+                    .replace('.txt', '')
+                    .replace('(', '--')
+                    .replace(')', '')
+
+                const pedidoArray = pedido.pedido.split('\n')
+
+                const div = document.createElement('div')
+                div.className = 'card'
+                div.innerHTML = `
+                    <p>${nomeFormatado}</p>
+                    <ul>
+                        ${pedidoArray.map(item => `<li>${item}</li>`).join('')}    
+                    </ul>
+                    <button ${nomeFormatado.trim().startsWith('CONCLUIDO') ? `onclick="chegou('${pedido.nome}')"` : ""}>
+                        ${nomeFormatado.trim().startsWith('CONCLUIDO') ? 'Concluido' : 'Chegou!'}
+                    </button>
+                `
+
+
+                if (nomeFormatado.trim().startsWith('CONCLUIDO')) {
+                    div.style.opacity = 0.5
+                    document.getElementById('concluidas').appendChild(div)
+                } else {
+                    document.getElementById('notasAbertas').appendChild(div)
+                }
+
+
+            });
+
+
+        }
+
+        // lançar como concluido
+        async function chegou(id) {
+
+            if(id.trim().startsWith('CONCLUIDO')) return
+
+            try {
+
+                const dados = await fetch(`${URLSERVER}/pedidos/${id}`, {
+                    method: 'PUT'
+                })
+
+                const resposta = await dados.response
+
+                window.location.reload()
+            } catch (error) {
+                alert(error)
+            }
+
+        }
+
+
+        carregarPedidosNaTela()
+    </script>
+</body>
+
+</html>
