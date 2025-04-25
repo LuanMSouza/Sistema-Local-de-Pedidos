@@ -60,13 +60,13 @@ app.post('/pedidos', (req, res) => {
 })
 
 app.get('/pedidos', (req, res) => {
-    const arquivos = fs.readdirSync('testes');
+    const arquivos = fs.readdirSync('notas');
 
     let arquivosArray = [];
 
     arquivos.forEach(arquivo => {
         try {
-            const data = fs.readFileSync(`testes/${arquivo}`, 'utf-8');
+            const data = fs.readFileSync(`notas/${arquivo}`, 'utf-8');
 
             arquivosArray.push({ nome: arquivo, pedido: data });
 
@@ -82,7 +82,7 @@ app.get('/pedidos', (req, res) => {
 app.put('/pedidos/:nome', (req, res) => {
     const { nome } = req.params
 
-    fs.rename(`testes/${nome}`, `testes/CONCLUIDO --- ${nome}`, (err) => {
+    fs.rename(`notas/${nome}`, `notas/CONCLUIDO --- ${nome}`, (err) => {
         if (err) {
             console.log(err);
             res.status(200).json('erro inesperado')
